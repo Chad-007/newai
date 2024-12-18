@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Machine Learning Models Dashboard</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Poppins:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary-gradient: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+        --secondary-gradient: linear-gradient(45deg, #00f2fe 0%, #87deff 100%);
+        --text-primary: #333;
+        --text-light: #f4f4f4;
+        --background-dark: #0f0c29;
+        --background-light: #f5f7fa;
+        --card-shadow: 0 15px 35px rgba(50, 50, 93, 0.1),
+          0 5px 15px rgba(0, 0, 0, 0.07);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background: var(--background-dark);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        perspective: 1500px;
+        overflow-x: hidden;
+        color: var(--text-light);
+        line-height: 1.6;
+      }
+
+      .bg-particles {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+        overflow: hidden;
+      }
+
+      .particle {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        opacity: 0.7;
+        pointer-events: none;
+      }
+
+      @keyframes particleMove1 {
+        0% {
+          transform: translateY(0) translateX(0) rotate(0deg);
+          opacity: 0.7;
+        }
+        50% {
+          transform: translateY(200px) translateX(100px) rotate(180deg);
+          opacity: 0.4;
+        }
+        100% {
+          transform: translateY(0) translateX(0) rotate(360deg);
+          opacity: 0.7;
+        }
+      }
+
+      @keyframes particleMove2 {
+        0% {
+          transform: translateY(0) translateX(0) rotate(0deg);
+          opacity: 0.5;
+        }
+        50% {
+          transform: translateY(-150px) translateX(-80px) rotate(-180deg);
+          opacity: 0.2;
+        }
+        100% {
+          transform: translateY(0) translateX(0) rotate(-360deg);
+          opacity: 0.5;
+        }
+      }
+
+      .container {
+        width: 95%;
+        max-width: 700px;
+        background: rgba(255, 255, 255, 0.07);
+        border-radius: 25px;
+        padding: 50px;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.125);
+        transform: rotateX(15deg) scale(0.9);
+        opacity: 0;
+        animation: floatIn 1.5s forwards cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .container::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(
+          0deg,
+          transparent,
+          rgba(255, 255, 255, 0.05),
+          transparent
+        );
+        transform: rotate(45deg);
+        z-index: 1;
+        pointer-events: none;
+      }
+
+      @keyframes floatIn {
+        0% {
+          opacity: 0;
+          transform: rotateX(30deg) translateY(100px) scale(0.8);
+        }
+        100% {
+          opacity: 1;
+          transform: rotateX(0) translateY(0) scale(1);
+        }
+      }
+
+      h1 {
+        text-align: center;
+        font-size: 3rem;
+        font-weight: 800;
+        background: var(--primary-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 40px;
+        position: relative;
+        letter-spacing: -2px;
+        text-shadow: 0 5px 15px rgba(106, 17, 203, 0.3);
+        animation: titlePulse 3s infinite alternate;
+      }
+
+      @keyframes titlePulse {
+        0% {
+          transform: scale(1);
+        }
+        100% {
+          transform: scale(1.02);
+        }
+      }
+
+      .selection,
+      #input-section {
+        margin-bottom: 30px;
+        position: relative;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 10px;
+        color: var(--text-light);
+        font-weight: 600;
+        opacity: 0;
+        transform: translateX(-20px);
+        animation: labelSlideIn 0.6s forwards;
+      }
+
+      @keyframes labelSlideIn {
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      select,
+      input[type="number"] {
+        width: 100%;
+        padding: 15px;
+        border: 2px solid transparent;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--text-light);
+        outline: none;
+        font-size: 1rem;
+        transition: all 0.4s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      select:focus,
+      input[type="number"]:focus {
+        border-color: #00f2fe;
+        box-shadow: 0 0 20px rgba(0, 242, 254, 0.3);
+      }
+
+      #submit-btn {
+        display: block;
+        width: 100%;
+        padding: 15px;
+        background: var(--primary-gradient);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        box-shadow: 0 10px 20px rgba(106, 17, 203, 0.3);
+      }
+
+      #submit-btn:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 25px rgba(106, 17, 203, 0.4);
+      }
+
+      #submit-btn::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          120deg,
+          transparent,
+          rgba(255, 255, 255, 0.3),
+          transparent
+        );
+        transition: all 0.6s;
+      }
+
+      #submit-btn:hover::before {
+        left: 100%;
+      }
+
+      #result {
+        background: rgba(106, 17, 203, 0.2);
+        border-radius: 15px;
+        padding: 25px;
+        text-align: center;
+        font-weight: 500;
+        opacity: 0;
+        transform: translateY(30px);
+        transition: all 0.8s cubic-bezier(0.165, 0.84, 0.44, 1);
+        border: 1px solid rgba(255, 255, 255, 0.125);
+        margin-top: 20px;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          width: 95%;
+          padding: 30px 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="bg-particles" id="particles-container"></div>
+
+    <div class="container">
+      <h1>Machine Learning Models Dashboard</h1>
+
+      <div class="selection">
+        <label for="model-select"
+          >Select Model <i class="fas fa-magic"></i
+        ></label>
+        <select id="model-select">
+          <option value="">--Choose a model--</option>
+          <option value="linear_regression">Linear Regression</option>
+          <option value="kmeans">K-Means Clustering</option>
+          <option value="neural_network">
+            Neural Network (Image Recognition)
+          </option>
+        </select>
+      </div>
+
+      <div id="input-section"></div>
+
+      <button id="submit-btn">
+        Submit Prediction <i class="fas fa-magic"></i>
+      </button>
+
+      <div id="result"></div>
+    </div>
+
+    <script>
+      function createParticles() {
+        const particlesContainer = document.getElementById(
+          "particles-container"
+        );
+        const particleCount = 100;
+
+        for (let i = 0; i < particleCount; i++) {
+          const particle = document.createElement("div");
+          particle.classList.add("particle");
+
+          const size = Math.random() * 15 + 2;
+          const left = Math.random() * 110 - 5;
+          const top = Math.random() * 110 - 5;
+
+          const animationName = i % 2 === 0 ? "particleMove1" : "particleMove2";
+          const duration = Math.random() * 25 + 15;
+          const delay = Math.random() * 10;
+
+          particle.style.width = `${size}px`;
+          particle.style.height = `${size}px`;
+          particle.style.left = `${left}%`;
+          particle.style.top = `${top}%`;
+          particle.style.animation = `${animationName} ${duration}s infinite ease-in-out`;
+          particle.style.animationDelay = `-${delay}s`;
+          particle.style.backgroundColor = `rgba(255, 255, 255, ${
+            Math.random() * 0.2 + 0.1
+          })`;
+
+          particlesContainer.appendChild(particle);
+        }
+      }
+      const modelSelect = document.getElementById("model-select");
+      const inputSection = document.getElementById("input-section");
+      const submitBtn = document.getElementById("submit-btn");
+      const resultDiv = document.getElementById("result");
+
+      createParticles();
+
+      modelSelect.addEventListener("change", function () {
+        const selected = this.value;
+        inputSection.innerHTML = ""; // Clear the input section
+
+        const heading = document.createElement("h1");
+        const description = document.createElement("p");
+        const image = document.createElement("img"); // Create an img element
+        image.style.width = "100%";
+        image.style.borderRadius = "12px";
+        image.style.marginBottom = "20px";
+
+        inputSection.appendChild(heading);
+        inputSection.appendChild(description);
+        inputSection.appendChild(image);
+        if (selected === "linear_regression") {
+          heading.innerHTML = "Linear Regression";
+          description.innerHTML =
+            "Features: Avg. Area Income, Avg. Area House Age, Avg. Area Number of Rooms, Area Population, output in $.";
+          image.src =
+            "{{ url_for('static', filename='images/linear_regression.png') }}";
+
+          for (let i = 1; i <= 4; i++) {
+            const label = document.createElement("label");
+            label.innerHTML = `Feature ${i} <i class="fas fa-chart-line"></i>`;
+            const input = document.createElement("input");
+            input.type = "number";
+            input.id = `feature-${i}`;
+            input.name = `feature-${i}`;
+            inputSection.appendChild(label);
+            inputSection.appendChild(input);
+          }
+        } else if (selected === "kmeans") {
+          heading.innerHTML = "K-Means Clustering";
+          description.innerHTML =
+            "Features: SepalLengthCm, SepalWidthCm, PetalLengthCm, PetalWidthCm. Cluster 1: Iris setosa, Cluster 2: Iris versicolor, Cluster 3: Iris virginica.";
+          image.src = "{{ url_for('static', filename='images/kmeans.png') }}";
+
+          for (let i = 1; i <= 4; i++) {
+            const label = document.createElement("label");
+            label.innerHTML = `Feature ${i} <i class="fas fa-chart-line"></i>`;
+            const input = document.createElement("input");
+            input.type = "number";
+            input.id = `feature-${i}`;
+            input.name = `feature-${i}`;
+            inputSection.appendChild(label);
+            inputSection.appendChild(input);
+          }
+        } else if (selected === "neural_network") {
+          heading.innerHTML = "Neural Network";
+          description.innerHTML =
+            "Upload an image to classify using a trained neural network.";
+          image.src =
+            "{{ url_for('static', filename='images/neural_network.png') }}";
+          const label = document.createElement("label");
+          label.innerHTML = "Upload Image <i class='fas fa-upload'></i>";
+          const input = document.createElement("input");
+          input.type = "file";
+          input.accept = "image/*";
+          input.id = "image-input";
+          inputSection.appendChild(label);
+          inputSection.appendChild(input);
+        }
+      });
+      submitBtn.addEventListener("click", function () {
+        const selected = modelSelect.value;
+        if (!selected) {
+          alert("Please select a model.");
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append("model", selected);
+
+        if (selected === "linear_regression" || selected === "kmeans") {
+          const features = [];
+          for (let i = 1; i <= 4; i++) {
+            const value = document.getElementById(`feature-${i}`).value;
+            if (value === "") {
+              alert("Please fill all feature fields.");
+              return;
+            }
+            features.push(parseFloat(value));
+          }
+          formData.append("input", JSON.stringify(features));
+        } else if (selected === "neural_network") {
+          const imageInput = document.getElementById("image-input");
+          if (imageInput.files.length === 0) {
+            alert("Please upload an image.");
+            return;
+          }
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            formData.append("image", e.target.result);
+            fetch("/predict", {
+              method: "POST",
+              body: formData,
+            })
+              .then((response) => response.json())
+              .then((data) => {
+                if (data.prediction !== undefined) {
+                  resultDiv.innerHTML = `<h3>Prediction: ${data.prediction}</h3>`;
+                } else if (data.cluster !== undefined) {
+                  resultDiv.innerHTML = `<h3>Cluster: ${data.cluster}</h3>`;
+                } else if (data.error) {
+                  resultDiv.innerHTML = `<h3>Error: ${data.error}</h3>`;
+                }
+                resultDiv.style.opacity = 0;
+                resultDiv.style.transform = "translateY(30px)";
+                setTimeout(() => {
+                  resultDiv.style.opacity = 1;
+                  resultDiv.style.transform = "translateY(0)";
+                }, 50);
+              });
+          };
+          reader.readAsDataURL(imageInput.files[0]);
+          return;
+        }
+        fetch("/predict", {
+          method: "POST",
+          body: formData,
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (
+              selected === "linear_regression" &&
+              data.prediction !== undefined
+            ) {
+              resultDiv.innerHTML = `<h3>Prediction: ${data.prediction}$</h3>`;
+            } else if (selected === "kmeans" && data.cluster !== undefined) {
+              resultDiv.innerHTML = `<h3>Cluster: ${data.cluster}</h3>`;
+            } else if (data.error) {
+              resultDiv.innerHTML = `<h3>Error: ${data.error}</h3>`;
+            }
+            resultDiv.style.opacity = 0;
+            resultDiv.style.transform = "translateY(30px)";
+            setTimeout(() => {
+              resultDiv.style.opacity = 1;
+              resultDiv.style.transform = "translateY(0)";
+            }, 50);
+          })
+          .catch((error) => {
+            resultDiv.innerHTML = `<h3>Error: ${error.message}</h3>`;
+            resultDiv.style.opacity = 0;
+            resultDiv.style.transform = "translateY(30px)";
+            setTimeout(() => {
+              resultDiv.style.opacity = 1;
+              resultDiv.style.transform = "translateY(0)";
+            }, 50);
+          });
+      });
+    </script>
+  </body>
+</html>
